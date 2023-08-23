@@ -6,7 +6,7 @@ using Valve.VR.InteractionSystem;
 
 public class PlayerLocomotion : MonoBehaviour
 {
-    private bool canWalk;
+    private bool canWalk = true;
 
 
     [SerializeField]
@@ -30,8 +30,6 @@ public class PlayerLocomotion : MonoBehaviour
 
     void Update()
     {
-        input = joystick.axis;
-
         input = new Vector2(joystick.axis.x * sensitivity * strafeMultiplier, joystick.axis.y * sensitivity);
         if (input.y < 0)
             input.y *= strafeMultiplier;
