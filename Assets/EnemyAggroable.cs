@@ -15,6 +15,9 @@ public class EnemyAggroable : MonoBehaviour
     [SerializeField]
     private List<Collider> visibleParts = new();
 
+    [SerializeField]
+    private LayerMask aggroableLayer;
+
     private float recalculateAggro()
     {
         aggroMultiplier = 1f;
@@ -38,10 +41,11 @@ public class EnemyAggroable : MonoBehaviour
         int total = 0;
         foreach (Collider col in visibleParts)
         {
-            if (Physics.Raycast(eye, col.bounds.center, out RaycastHit hit))
+            if (Physics.Raycast(eye, col.bounds.center - eye, out RaycastHit hit))
+            {
                 total += hit.collider == col ? 1 : 0;
+            }
         }
-
         return (float)total / (float)visibleParts.Count;   
     }
 }
