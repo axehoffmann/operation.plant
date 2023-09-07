@@ -44,8 +44,6 @@ public class PlayerLocomotion : GameComponent
         ziplineIndex = 0;
         ziplineDelta = 0;
         ziplineDeltaSpeed = -1;
-
-        Debug.Log("Start zipline");
     }
 
     public void EndZipline(LineRenderer zipline)

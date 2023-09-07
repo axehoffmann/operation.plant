@@ -8,14 +8,10 @@ public class Scavengeable : MonoBehaviour
     private float baseValue;
 
     public float value;
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
+    private void FixedUpdate()
     {
-        
+        if (value < baseValue)
+            value += (baseValue * 0.05f) * Time.fixedDeltaTime;
     }
 }

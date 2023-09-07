@@ -20,6 +20,7 @@ public class ScavengerDroneAI : MonoBehaviour
 
     public EnemyAggroable currentAggroTarget = null;
 
+    [SerializeField] private float scrappingRate = 0.2f;
 
     [SerializeField] private Vector2 scavengeRange = new(0.4f, 1.0f);
     [SerializeField] private float passiveThrust = 0.2f;
@@ -43,8 +44,7 @@ public class ScavengerDroneAI : MonoBehaviour
 
     private void SelectScavengable()
     {
-        scavengeTargets.OrderByDescending(x => x.value - Vector3.Distance(transform.position, x.transform.position));
-        currentScrap = scavengeTargets[0];
+        currentScrap = scavengeTargets.OrderByDescending(x => x.value - (Vector3.Distance(transform.position, x.transform.position) * 0.3f)).First();
     }
 
     private void UpdateAggro()
@@ -119,6 +119,8 @@ public class ScavengerDroneAI : MonoBehaviour
                 );
                 currentOrbitDelay = Random.Range(orbitDelay.x, orbitDelay.y);
             }
+
+            currentScrap.value -= scrappingRate * Time.fixedDeltaTime;
         }
     }
 

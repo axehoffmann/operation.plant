@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Valve.VR;
 using Valve.VR.InteractionSystem;
 
 public class Zipline : MonoBehaviour
@@ -8,26 +9,26 @@ public class Zipline : MonoBehaviour
     [SerializeField]
     LineRenderer line;
 
-    public void OnAttachedToHand(Hand hand)
+    [SerializeField] private SteamVR_Action_Boolean grabbed;
+    private bool prevFrameGrabButton;
+    private Hand hoveringHand;
+
+    public void OnHandHoverBegin(Hand hand)
     {
-        hand.SendMessageUpwards("BeginZipline", line, SendMessageOptions.DontRequireReceiver);
-        Debug.Log("GrabZipline");
+        hoveringHand = hand;
     }
 
-    public void OnDetachedFromHand(Hand hand)
+    public void OnHandHoverEnd(Hand hand)
     {
-        hand.SendMessageUpwards("EndZipline", line, SendMessageOptions.DontRequireReceiver);
+        hoveringHand = null;
+
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
     void Update()
     {
-        
+        if (hoveringHand && !prevFrameGrabButton && grabbed.state)
+            hoveringHand.SendMessageUpwards("BeginZipline", line, SendMessageOptions.DontRequireReceiver);
+
+        prevFrameGrabButton = grabbed.state;
     }
 }
