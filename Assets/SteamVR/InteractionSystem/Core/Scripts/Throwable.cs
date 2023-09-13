@@ -40,9 +40,10 @@ namespace Valve.VR.InteractionSystem
         [Tooltip( "When detaching the object, should it return to its original parent?" )]
 		public bool restoreOriginalParent = false;
 
+        public Vector3 releaseVelocity = Vector3.zero;
+        public Vector3 releaseAngularVelocity = Vector3.zero;
 
-
-		protected VelocityEstimator velocityEstimator;
+        protected VelocityEstimator velocityEstimator;
         protected bool attached = false;
         protected float attachTime;
         protected Vector3 attachPosition;
@@ -169,13 +170,10 @@ namespace Valve.VR.InteractionSystem
 
             rigidbody.interpolation = hadInterpolation;
 
-            Vector3 velocity;
-            Vector3 angularVelocity;
+            GetReleaseVelocities(hand, out releaseVelocity, out releaseAngularVelocity);
 
-            GetReleaseVelocities(hand, out velocity, out angularVelocity);
-
-            rigidbody.velocity = velocity;
-            rigidbody.angularVelocity = angularVelocity;
+            rigidbody.velocity = releaseVelocity;
+            rigidbody.angularVelocity = releaseAngularVelocity;
         }
 
 
