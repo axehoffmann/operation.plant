@@ -30,7 +30,10 @@ public class Radio : MonoBehaviour
 
     void OnAttachedToHand() => held = true;
     void OnDetachedFromHand() => held = false;
-    private void Start() => audioSource = GetComponent<AudioSource>();
+    private void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
 
     private void FixedUpdate()
     {
@@ -39,6 +42,9 @@ public class Radio : MonoBehaviour
             pauseDuration -= Time.fixedDeltaTime;
             return;
         }
+
+        if (currentEvent == null)
+            return;
 
         if (!currentEventPlayed)
         {

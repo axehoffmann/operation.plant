@@ -61,7 +61,8 @@ public class Bindable : MonoBehaviour
 
 
         // If we are very close to bind location, lock to it
-        if (Vector3.Distance(transform.position, bindLocation.position) < 0.2f && softbind)
+        if (Vector3.Distance(transform.position, bindLocation.position) < 0.2f && softbind
+            || Vector3.Distance(transform.position, bindLocation.position) > 15f)
         {
             transform.parent = bindLocation;
             transform.localPosition = Vector3.zero;
@@ -89,7 +90,5 @@ public class Bindable : MonoBehaviour
             if (transform.position.y < bindLocation.position.y)
                 rb.AddForce((bindLocation.position.y - transform.position.y) * Vector3.up * bindForce * 0.25f);
         }
-
-
     }
 }

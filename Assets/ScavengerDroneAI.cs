@@ -63,13 +63,15 @@ public class ScavengerDroneAI : MonoBehaviour
 
         // Take the closest aggroable with direct line of sight
         var allAggroables = closeAggroables.Concat(eyeAggroables)
-                                .OrderBy(x => Vector3.Distance(transform.position, x.transform.position));
-        foreach (var target in closeAggroables)
+                                .Select(x => x.GetComponentInParent<EnemyAggroable>())
+                                .OrderBy(x =>
+                                    Vector3.Distance(transform.position, x.transform.position) * x.AggroMultiplier);
+
+        foreach (var target in allAggroables)
         {
-            EnemyAggroable possibleTarget = target.GetComponentInParent<EnemyAggroable>();
-            if (possibleTarget.VisibleRatio(transform.position) > 0.4f)
+            if (target.VisibleRatio(transform.position) > 0.4f)
             {
-                currentAggroTarget = possibleTarget;
+                currentAggroTarget = target;
                 return;
             }
         }

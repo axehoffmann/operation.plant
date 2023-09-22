@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class EnemyAggroable : MonoBehaviour
 {
-    public float AggroMultiplier { get { return stale ? recalculateAggro() : aggroMultiplier; } }
+    public float AggroMultiplier { get { return stale ? RecalculateAggro() : aggroMultiplier; } }
     [SerializeField] private float aggroMultiplier = 1f;
     private bool stale = false;
 
@@ -18,7 +18,10 @@ public class EnemyAggroable : MonoBehaviour
     [SerializeField]
     private LayerMask aggroableLayer;
 
-    private float recalculateAggro()
+    [SerializeField]
+    private bool ignoreLOS = false;
+
+    private float RecalculateAggro()
     {
         aggroMultiplier = 1f;
         foreach (var kv in multipliers)
@@ -38,6 +41,11 @@ public class EnemyAggroable : MonoBehaviour
     // How visible is this aggroable from an eye?
     public float VisibleRatio(Vector3 eye)
     {
+        if (ignoreLOS)
+        {
+            return 1.0f;
+        }
+
         int total = 0;
         foreach (Collider col in visibleParts)
         {

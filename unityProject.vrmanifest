@@ -5,7 +5,7 @@
       "app_key": "application.generated.unity.operationplant.exe",
       "launch_type": "url",
       "url": "steam://launch/",
-      "action_manifest_path": "D:\\UnityProjects\\a1832087\\operation.plant-main\\Assets\\StreamingAssets\\SteamVR\\actions.json",
+      "action_manifest_path": "D:\\AAUni\\Operation PLANT\\Assets\\StreamingAssets\\SteamVR\\actions.json",
       "strings": {
         "en_us": {
           "name": "Operation PLANT [Testing]"
