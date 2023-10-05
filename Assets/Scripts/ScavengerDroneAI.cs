@@ -33,11 +33,13 @@ public class ScavengerDroneAI : MonoBehaviour
     [SerializeField] private LayerMask aggroable;
     [SerializeField] [Range(0f, 1f)] private float fieldOfView = 0.8f;
 
+    [SerializeField] private float rotateDegPerSecond = 100f;
+
     private void Awake()
     {
         scavengeTargets = FindObjectsOfType<Scavengeable>().ToList();
 
-        InvokeRepeating("UpdateAggro", 0.5f, 0.5f);
+        InvokeRepeating(nameof(UpdateAggro), 0.5f, 0.5f);
 
         rb = GetComponent<Rigidbody>();
     }
@@ -85,9 +87,7 @@ public class ScavengerDroneAI : MonoBehaviour
         if (moving)
         {
             rb.AddForce(
-                passiveThrust
-                * (pos - transform.position)
-                * (dist > range.y ? 1 : -2)
+                (dist > range.y ? 1 : -2) * passiveThrust * (pos - transform.position)
             );
         }
         return moving;
@@ -104,7 +104,8 @@ public class ScavengerDroneAI : MonoBehaviour
         if (currentScrap == null || currentScrap.value < 0.1f)
             SelectScavengable();
 
-        transform.LookAt(currentScrap.transform.position);
+        Quaternion targetDir = Quaternion.LookRotation(currentScrap.transform.position - transform.position);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetDir, rotateDegPerSecond * Time.fixedDeltaTime);
 
         // Move towards target scrap if we are too far, or away if we are too close.
         if (!MoveTowardsPosition(currentScrap.transform.position, scavengeRange))
@@ -114,9 +115,10 @@ public class ScavengerDroneAI : MonoBehaviour
                 currentOrbitDelay -= Time.fixedDeltaTime;
             else
             {
-                rb.AddForce(transform.right 
-                    * Random.Range(orbitForce.x, orbitForce.y)
-                    * ((Random.value * 2) - 1),
+                rb.AddForce(
+                    Random.Range(orbitForce.x, orbitForce.y)
+                    * ((Random.value * 2) - 1)
+                    * transform.right,
                     ForceMode.Impulse
                 );
                 currentOrbitDelay = Random.Range(orbitDelay.x, orbitDelay.y);
@@ -143,7 +145,9 @@ public class ScavengerDroneAI : MonoBehaviour
             return;
         }
 
-        transform.LookAt(currentAggroTarget.transform.position);
+        Quaternion targetDir = Quaternion.LookRotation(currentAggroTarget.transform.position - transform.position);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetDir, rotateDegPerSecond * Time.fixedDeltaTime);
+
         MoveTowardsPosition(currentAggroTarget.transform.position, scavengeRange);
     }
 
