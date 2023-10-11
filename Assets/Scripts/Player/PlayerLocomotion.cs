@@ -33,7 +33,7 @@ public class PlayerLocomotion : GameComponent
 
     private Vector2 input;
 
-    private EnemyAggroable aggro;
+    [SerializeField] private EnemyAggroable aggro;
     
 
     public void BeginZipline(LineRenderer zipline)
@@ -57,7 +57,6 @@ public class PlayerLocomotion : GameComponent
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        aggro = GetComponent<EnemyAggroable>();
     }
 
     void Update()

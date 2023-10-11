@@ -33,7 +33,12 @@ public class ScavengerDroneAI : MonoBehaviour
     [SerializeField] private LayerMask aggroable;
     [SerializeField] [Range(0f, 1f)] private float fieldOfView = 0.8f;
 
+    [SerializeField] private LineRenderer lazer;
+
     [SerializeField] private float rotateDegPerSecond = 100f;
+
+    [SerializeField] private float alertDuration = 3f;
+    private float currentAlertDur = 0f;
 
     private void Awake()
     {
@@ -66,11 +71,13 @@ public class ScavengerDroneAI : MonoBehaviour
         // Take the closest aggroable with direct line of sight
         var allAggroables = closeAggroables.Concat(eyeAggroables)
                                 .Select(x => x.GetComponentInParent<EnemyAggroable>())
-                                .OrderBy(x =>
+                                .OrderByDescending(x =>
                                     Vector3.Distance(transform.position, x.transform.position) * x.AggroMultiplier);
 
         foreach (var target in allAggroables)
         {
+            if (Vector3.Distance(target.transform.position, transform.position) > eyesightRadius)
+                continue;
             if (target.VisibleRatio(transform.position) > 0.4f)
             {
                 currentAggroTarget = target;
@@ -110,6 +117,11 @@ public class ScavengerDroneAI : MonoBehaviour
         // Move towards target scrap if we are too far, or away if we are too close.
         if (!MoveTowardsPosition(currentScrap.transform.position, scavengeRange))
         {
+            // Laze our target
+            lazer.enabled = true;
+            lazer.SetPosition(1, currentScrap.transform.position);
+            lazer.SetPosition(0, lazer.transform.position);
+
             // Perform some orbiting around the scrap pile every now and then
             if (currentOrbitDelay > 0f)
                 currentOrbitDelay -= Time.fixedDeltaTime;
@@ -130,11 +142,16 @@ public class ScavengerDroneAI : MonoBehaviour
 
     private void OnAlert()
     {
+        currentAlertDur -= Time.fixedDeltaTime;
+
         if (currentAggroTarget)
         {
             state = State.Aggro;
             return;
         }
+
+        if (currentAlertDur <= 0f)
+            state = State.Scavenging;
     }
 
     private void OnAggro()
@@ -142,6 +159,7 @@ public class ScavengerDroneAI : MonoBehaviour
         if (!currentAggroTarget)
         {
             state = State.Alert;
+            currentAlertDur = alertDuration;
             return;
         }
 
@@ -159,6 +177,7 @@ public class ScavengerDroneAI : MonoBehaviour
 
     private void FixedUpdate()
     {
+        lazer.enabled = false;
         switch(state)
         {
             case State.Scavenging:
