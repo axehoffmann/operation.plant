@@ -12,6 +12,9 @@ public class RadarIndicator : MonoBehaviour
 
     void LateUpdate()
     {
+        if (!pointTo)
+            return;
+
         float dist = Vector3.Distance(pointTo.transform.position, transform.position);
 
         // Delete indicator if the tracked object is out of range

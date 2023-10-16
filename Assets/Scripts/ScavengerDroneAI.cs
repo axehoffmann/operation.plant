@@ -28,6 +28,9 @@ public class ScavengerDroneAI : MonoBehaviour
     private float currentOrbitDelay = 7.0f;
     [SerializeField] private Vector2 orbitForce = new(4.0f, 8.0f);
 
+    [SerializeField] private float maxSpeed = 5.0f;
+    [SerializeField] private float decelerationSpeed = 2.0f;
+
     [SerializeField] private float closeAggroRadius = 3f;
     [SerializeField] private float eyesightRadius = 10f;
     [SerializeField] private LayerMask aggroable;
@@ -51,7 +54,10 @@ public class ScavengerDroneAI : MonoBehaviour
 
     private void SelectScavengable()
     {
-        currentScrap = scavengeTargets.OrderByDescending(x => x.value - (Vector3.Distance(transform.position, x.transform.position) * 0.3f)).First();
+        // Select a scrap randomly, preferring nearby and high-value scrap
+        currentScrap = scavengeTargets.OrderByDescending(
+            x => x.value - (Vector3.Distance(transform.position, x.transform.position) * 0.3f))
+            .ElementAt(Random.Range(0, Mathf.Min(scavengeTargets.Count - 1, 3)));
     }
 
     private void UpdateAggro()
@@ -71,8 +77,9 @@ public class ScavengerDroneAI : MonoBehaviour
         // Take the closest aggroable with direct line of sight
         var allAggroables = closeAggroables.Concat(eyeAggroables)
                                 .Select(x => x.GetComponentInParent<EnemyAggroable>())
+                                .Where(x => x != null)
                                 .OrderByDescending(x =>
-                                    Vector3.Distance(transform.position, x.transform.position) * x.AggroMultiplier);
+                                    Vector3.Distance(transform.position, x.transform.position) * x.AggroMultiplier); 
 
         foreach (var target in allAggroables)
         {
@@ -93,9 +100,17 @@ public class ScavengerDroneAI : MonoBehaviour
         bool moving = dist > range.y || dist < range.x;
         if (moving)
         {
-            rb.AddForce(
-                (dist > range.y ? 1 : -2) * passiveThrust * (pos - transform.position)
-            );
+            // Decelerate if above our max speed
+            if (rb.velocity.magnitude > maxSpeed)
+            {
+                rb.AddForce(rb.velocity.normalized * decelerationSpeed);
+            }
+            else
+            {
+                rb.AddForce(
+                    (dist > range.y ? 1 : -2) * passiveThrust * (pos - transform.position)
+                );
+            }
         }
         return moving;
     }
