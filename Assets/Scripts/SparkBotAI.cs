@@ -23,6 +23,8 @@ public class SparkBotAI : MonoBehaviour
 
     [SerializeField] private float rotationSpeed = 90f;
 
+    private bool firstAggro = false;
+
     private IEnumerator Attack()
     {
         anim.SetTrigger("Attack");
@@ -66,7 +68,7 @@ public class SparkBotAI : MonoBehaviour
             anim.SetBool("Walking", true);
 
             Quaternion targetDir = Quaternion.LookRotation(delta, transform.up);
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetDir, rotationSpeed * Time.fixedDeltaTime);
+            rb.MoveRotation(Quaternion.RotateTowards(transform.rotation, targetDir, rotationSpeed * Time.fixedDeltaTime));
 
             float facing = Vector3.Dot(delta, transform.forward);
             if (facing > 0)
@@ -85,5 +87,11 @@ public class SparkBotAI : MonoBehaviour
                                 .OrderByDescending(x =>
                                     Vector3.Distance(transform.position, x.transform.position) * x.AggroMultiplier)
                                 .FirstOrDefault();
+
+        if (!firstAggro && currentAggroTarget != null)
+        {
+            firstAggro = true;
+            anim.SetTrigger("WakeUp");
+        }
     }
 }

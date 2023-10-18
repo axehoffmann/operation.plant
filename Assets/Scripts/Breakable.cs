@@ -10,6 +10,8 @@ public class Breakable : MonoBehaviour
     [SerializeField] private GameObject instantiateOnBreak;
     [SerializeField] private bool destroyOnBreak;
     [SerializeField] private AudioClip playOnBreak;
+    [SerializeField] private ParticleSystem particleToStop;
+    [SerializeField] private Animator anim;
 
     private Rigidbody rb;
     private AudioSource source;
@@ -32,7 +34,7 @@ public class Breakable : MonoBehaviour
                 Destroy(gameObject);
 
             if (instantiateOnBreak)
-                Instantiate(gameObject, transform.position, Quaternion.identity);
+                Instantiate(instantiateOnBreak, transform.position, Quaternion.identity);
 
             if (source)
             {
@@ -49,7 +51,15 @@ public class Breakable : MonoBehaviour
             }
 
             if (rb)
+            {
                 rb.useGravity = true;
+            }
+
+            if (particleToStop)
+                particleToStop.Stop();
+
+            
+            anim.SetTrigger("Break");
         }
     }
 }

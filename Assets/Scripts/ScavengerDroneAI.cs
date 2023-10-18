@@ -41,7 +41,26 @@ public class ScavengerDroneAI : MonoBehaviour
     [SerializeField] private float rotateDegPerSecond = 100f;
 
     [SerializeField] private float alertDuration = 3f;
+
+    [SerializeField] private Animator anim;
+
+    [SerializeField] private float attackCooldown = 3f;
+    [SerializeField] private float attackDamage = 20f;
+    [SerializeField] private AudioSource attackSound;
+    private float currentAttackCooldown = 0f;
+
     private float currentAlertDur = 0f;
+
+    private IEnumerator DamageTargetDelayed(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        print(Vector3.Distance(transform.position, currentAggroTarget.transform.position));
+        if (currentAggroTarget 
+            && Vector3.Distance(transform.position, currentAggroTarget.transform.position) < 1.5f)
+        {
+            currentAggroTarget.GetComponentInParent<PlayerHealth>().Hurt(attackDamage);
+        }
+    }
 
     private void Awake()
     {
@@ -115,11 +134,19 @@ public class ScavengerDroneAI : MonoBehaviour
         return moving;
     }
 
+    private bool IsInFront(Vector3 target)
+    {
+        Vector3 delta = target - transform.position;
+        float facing = Vector3.Dot(delta, transform.forward);
+        return facing > 0.3;            
+    }
+
     private void OnScavenging()
     {
         if (currentAggroTarget)
         {
             state = State.Aggro;
+            currentAttackCooldown = attackCooldown;
             return;
         }   
         
@@ -132,10 +159,26 @@ public class ScavengerDroneAI : MonoBehaviour
         // Move towards target scrap if we are too far, or away if we are too close.
         if (!MoveTowardsPosition(currentScrap.transform.position, scavengeRange))
         {
+            // Only laze if we are looking in the general direction of the scrap
+            if (!IsInFront(currentScrap.transform.position))
+                return;
+
+            if (currentAttackCooldown > 0)
+                currentAttackCooldown -= Time.fixedDeltaTime;
+
+            if (currentAttackCooldown <= 0)
+            {
+                anim.SetTrigger("Attack");
+                attackSound.Play();
+                currentAttackCooldown = attackCooldown;
+            }
+
+            /*
             // Laze our target
             lazer.enabled = true;
             lazer.SetPosition(1, currentScrap.transform.position);
             lazer.SetPosition(0, lazer.transform.position);
+            */
 
             // Perform some orbiting around the scrap pile every now and then
             if (currentOrbitDelay > 0f)
@@ -162,6 +205,7 @@ public class ScavengerDroneAI : MonoBehaviour
         if (currentAggroTarget)
         {
             state = State.Aggro;
+            currentAttackCooldown = attackCooldown;
             return;
         }
 
@@ -181,7 +225,19 @@ public class ScavengerDroneAI : MonoBehaviour
         Quaternion targetDir = Quaternion.LookRotation(currentAggroTarget.transform.position - transform.position);
         transform.rotation = Quaternion.RotateTowards(transform.rotation, targetDir, rotateDegPerSecond * Time.fixedDeltaTime);
 
-        MoveTowardsPosition(currentAggroTarget.transform.position, scavengeRange);
+        if(!MoveTowardsPosition(currentAggroTarget.transform.position + Vector3.up, scavengeRange))
+        {
+            if (currentAttackCooldown > 0)
+                currentAttackCooldown -= Time.fixedDeltaTime;
+
+            if (currentAttackCooldown <= 0)
+            {
+                anim.SetTrigger("Attack");
+                StartCoroutine(DamageTargetDelayed(0.3f));
+                attackSound.Play();
+                currentAttackCooldown = attackCooldown;
+            }
+        }
     }
 
     private void OnAttacking()

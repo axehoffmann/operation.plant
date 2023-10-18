@@ -7,7 +7,7 @@ using Valve.VR;
 public class PlayerHealth : MonoBehaviour
 {
     [SerializeField] private float maxHealth;
-    private float currentHealth;
+    [SerializeField] private float currentHealth;
 
     [SerializeField] private float regeneration;
 
@@ -46,5 +46,6 @@ public class PlayerHealth : MonoBehaviour
         transform.position = spawnPoint.position;
         currentHealth = maxHealth;
         SteamVR_Fade.View(new Color(0, 0, 0, 0), 1f);
+        dead = false;
     }
 }

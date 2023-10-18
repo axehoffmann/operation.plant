@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Video;
 
 public class Radio : MonoBehaviour
 {
-    private Queue<RadioEvent> radioQueue = new Queue<RadioEvent>();
+    private Queue<RadioEvent> radioQueue = new();
+
+    private VideoPlayer video;
 
     public void PlayEvent(RadioEvent radioEvent)
     {
@@ -33,6 +36,7 @@ public class Radio : MonoBehaviour
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
+        video = GetComponentInChildren<VideoPlayer>();
     }
 
     private void FixedUpdate()
@@ -44,12 +48,20 @@ public class Radio : MonoBehaviour
         }
 
         if (currentEvent == null)
+        {
             return;
+        }
 
         if (!currentEventPlayed)
         {
             // Play high priority event
             PlayCurrentEvent();
+            return;
+        }
+
+        if (radioQueue.Count == 0)
+        {
+            video.enabled = true;
             return;
         }
 
@@ -66,6 +78,7 @@ public class Radio : MonoBehaviour
     {
         audioSource.PlayOneShot(currentEvent.audio);
         pauseDuration = currentEvent.audio.length + currentEvent.pauseAfterPlaying;
+        video.enabled = false;
         currentEventPlayed = true;
     }
 }

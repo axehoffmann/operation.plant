@@ -15,6 +15,7 @@ public class PLANTAI : MonoBehaviour
     [SerializeField] private float hoverHeight;
     [SerializeField] private LayerMask groundMask;
     [SerializeField] private Transform raycastOrigin;
+    [SerializeField] private float maxDistance = 20f;
 
 
     void Start()
@@ -50,6 +51,11 @@ public class PLANTAI : MonoBehaviour
             vertDiff = Mathf.Clamp(vertDiff, 0f, heightLeniency);
 
             spring.connectedAnchor = hit.point + ((hoverHeight + vertDiff) * Vector3.up);
+        }
+
+        if (Vector2.Distance(pPos, pos) > maxDistance)
+        {
+            transform.position = following.position + following.right;
         }
     }
 }
