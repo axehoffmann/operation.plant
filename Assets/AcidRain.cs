@@ -19,6 +19,7 @@ public class AcidRain : MonoBehaviour
     private void UpdateAcidRain(Collider other, float dps)
     {
         PlayerHealth player = other.GetComponentInParent<PlayerHealth>();
+        Debug.Log(player);
         if (player != null)
         {
             player.DamageOverTime(dps);

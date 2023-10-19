@@ -9,6 +9,10 @@ public class Radio : MonoBehaviour
 
     private VideoPlayer video;
 
+    [SerializeField] private VideoClip active;
+    [SerializeField] private VideoClip idle;
+    [SerializeField] private VideoClip noSignal;
+
     public void PlayEvent(RadioEvent radioEvent)
     {
         if (radioEvent.highPriority)
@@ -61,7 +65,7 @@ public class Radio : MonoBehaviour
 
         if (radioQueue.Count == 0)
         {
-            video.enabled = true;
+            video.clip = idle;
             return;
         }
 
@@ -78,7 +82,7 @@ public class Radio : MonoBehaviour
     {
         audioSource.PlayOneShot(currentEvent.audio);
         pauseDuration = currentEvent.audio.length + currentEvent.pauseAfterPlaying;
-        video.enabled = false;
+        video.clip = active;
         currentEventPlayed = true;
     }
 }
