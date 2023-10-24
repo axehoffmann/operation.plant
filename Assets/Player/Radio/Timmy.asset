@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Timmy
   m_EditorClassIdentifier: 
   audio: {fileID: 8300000, guid: 6aace200652c43d438b70868e64a93cc, type: 3}
-  highPriority: 1
+  highPriority: 0
   pauseAfterPlaying: 0.5

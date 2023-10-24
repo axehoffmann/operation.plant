@@ -11,16 +11,16 @@ public class PlayerHealth : MonoBehaviour
 
     [SerializeField] private float regeneration;
 
-    [SerializeField] private Transform spawnPoint;
+    public SpawnPoint spawnPoint;
 
     private float damageOverTime = 0f;
     private bool dead = false;
     private void FixedUpdate()
     {
-        if (currentHealth < maxHealth)
-        {
-            currentHealth += (regeneration - damageOverTime) * Time.fixedDeltaTime;
-        }
+
+        currentHealth += (regeneration - damageOverTime) * Time.fixedDeltaTime;
+        
+        currentHealth = Mathf.Min(currentHealth, maxHealth);
 
         if (currentHealth < 0 && !dead)
         {
@@ -43,7 +43,7 @@ public class PlayerHealth : MonoBehaviour
         dead = true;
         SteamVR_Fade.View(Color.black, 4f);
         yield return new WaitForSeconds(4.5f);
-        transform.position = spawnPoint.position;
+        transform.position = spawnPoint.transform.position;
         currentHealth = maxHealth;
         SteamVR_Fade.View(new Color(0, 0, 0, 0), 1f);
         dead = false;

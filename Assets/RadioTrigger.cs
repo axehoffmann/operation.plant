@@ -6,7 +6,7 @@ public class RadioTrigger : MonoBehaviour
 {
 
     [SerializeField] private RadioEvent radioEvent;
-    private bool played = false;
+    [SerializeField] private bool played = false;
 
     private Radio radio;
 
@@ -17,6 +17,7 @@ public class RadioTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log("trigger");
         if (played)
             return;
         

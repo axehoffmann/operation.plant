@@ -15,6 +15,7 @@ public class Radio : MonoBehaviour
 
     public void PlayEvent(RadioEvent radioEvent)
     {
+        /*
         if (radioEvent.highPriority)
         {
             pauseDuration = 0.5f;
@@ -23,7 +24,7 @@ public class Radio : MonoBehaviour
             currentEventPlayed = false;
             return;
         }
-
+        */
         radioQueue.Enqueue(radioEvent);
     }
 
@@ -35,8 +36,6 @@ public class Radio : MonoBehaviour
     private RadioEvent currentEvent;
     private bool currentEventPlayed = false;
 
-    void OnAttachedToHand() => held = true;
-    void OnDetachedFromHand() => held = false;
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
@@ -48,18 +47,6 @@ public class Radio : MonoBehaviour
         if (pauseDuration > 0)
         {
             pauseDuration -= Time.fixedDeltaTime;
-            return;
-        }
-
-        if (currentEvent == null)
-        {
-            return;
-        }
-
-        if (!currentEventPlayed)
-        {
-            // Play high priority event
-            PlayCurrentEvent();
             return;
         }
 
@@ -76,6 +63,22 @@ public class Radio : MonoBehaviour
             PlayCurrentEvent();
             return;
         }
+
+        // Stuff we needed for high priority events
+        /*
+        if (currentEvent == null)
+        {
+            return;
+        }
+
+        if (!currentEventPlayed)
+        {
+            // Play high priority event
+            PlayCurrentEvent();
+            return;
+        }
+        */
+        
     }
 
     private void PlayCurrentEvent()

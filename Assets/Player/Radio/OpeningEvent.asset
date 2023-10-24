@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: OpeningEvent
   m_EditorClassIdentifier: 
   audio: {fileID: 8300000, guid: 1ee486882931b8942a402c109cd62862, type: 3}
-  highPriority: 1
+  highPriority: 0
   pauseAfterPlaying: 0.5

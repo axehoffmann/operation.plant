@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: IHateRobots
   m_EditorClassIdentifier: 
   audio: {fileID: 8300000, guid: 8b820c7dd895d59468b4014d99ce9e89, type: 3}
-  highPriority: 1
+  highPriority: 0
   pauseAfterPlaying: 0.5

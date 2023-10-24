@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: ResourceWorthGathering
   m_EditorClassIdentifier: 
   audio: {fileID: 8300000, guid: d7e497701c679584cb3d179d8a21baa7, type: 3}
-  highPriority: 1
+  highPriority: 0
   pauseAfterPlaying: 0.5
